@@ -1,0 +1,39 @@
+services:
+    postgre:
+        image: postgres:12.17
+        ports:
+            - 5432:5432
+        environment:
+            POSTGRES_PASSWORD: minhasenha
+            POSTGRES_USER: gps
+            POSTGRES_DB: kubenews
+        volumes: 
+            -  postgre_docker_vol:/var/lib/postgresql/data
+        networks:
+            - kube_news_net
+
+    kube_news:
+        image: gersonporciuncula/kube-news:v3
+        build: 
+            context: ./src
+            dockerfile: Dockerfile
+
+        ports:
+            - 8080:8080   
+        networks:
+            - kube_news_net
+        depends_on:
+            - postgre
+        environment:
+            DB_PASSWORD: minhasenha
+            DB_USERNAME: gps
+            DB_DATABASE: kubenews 
+            DB_HOST: postgre
+
+volumes:
+    postgre_docker_vol:
+        
+networks:
+    kube_news_net:
+        name: kbnetwork
+        driver: bridge
