@@ -1,19 +1,19 @@
 services:
     postgre:
-        image: postgres:12.17
+        image: postgres:${POSTGRES_TAG:-12.17}
         ports:
             - 5432:5432
         environment:
-            POSTGRES_PASSWORD: minhasenha
-            POSTGRES_USER: gps
-            POSTGRES_DB: kubenews
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-minhasenha}
+            POSTGRES_USER: ${POSTGRES_USER:-gps}
+            POSTGRES_DB: ${POSTGRES_DB:-kubenews}
         volumes: 
             -  postgre_docker_vol:/var/lib/postgresql/data
         networks:
             - kube_news_net
 
     kube_news:
-        image: gersonporciuncula/kube-news:v3
+        image: gersonporciuncula/kube-news:${KUBE_NEWS_TAG:-latest}
         build: 
             context: ./src
             dockerfile: Dockerfile
@@ -25,9 +25,9 @@ services:
         depends_on:
             - postgre
         environment:
-            DB_PASSWORD: minhasenha
-            DB_USERNAME: gps
-            DB_DATABASE: kubenews 
+            DB_PASSWORD: ${POSTGRES_PASSWORD:-minhasenha}
+            DB_USERNAME: ${POSTGRES_USER:-gps}
+            DB_DATABASE: ${POSTGRES_DB:-kubenews} 
             DB_HOST: postgre
 
 volumes:
